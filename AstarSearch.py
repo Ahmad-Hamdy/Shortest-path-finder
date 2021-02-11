@@ -194,5 +194,7 @@ grid = [ [1, 1, 1, 1, 1, 1, 1, 1, 1],
          [0, 0, 0, 0, 0, 0, 0, 1, 1] ]
 
 path = find_shortest_path(grid, (0,0), (8,8))
-for i in path:
-	print(i, end = " -> ")
+
+display = [ str(Node) for Node in path]
+print(" -> ".join(display))
+
