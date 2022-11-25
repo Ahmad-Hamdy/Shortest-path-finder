@@ -4,7 +4,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(1000, 500)
+        Form.resize(1500, 500)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(Form)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.frame = QtWidgets.QFrame(Form)
@@ -22,13 +22,12 @@ class Ui_Form(object):
         self.pushButton = [
                         [QtWidgets.QPushButton(self.gridLayoutWidget) for _ in range(10)]
                                                                      for _ in range(10)]
-        for i in range(10):
-            for j in range(10):
-                #self.pushButton[i][j].setEnabled(False)
-                self.pushButton[i][j].setMinimumSize(QtCore.QSize(100, 100))
-                #self.pushButton[i][j].setStyleSheet("background-color: rgb(64, 127, 191);")
-                self.pushButton[i][j].setObjectName("pushButton{0}{1}".format(i,j))
-                self.gridLayout.addWidget(self.pushButton[i][j], i, j, 1, 1)
+        for r in range(10):
+            for c in range(10):
+                self.pushButton[r][c].setMinimumSize(QtCore.QSize(100, 100))
+                self.pushButton[r][c].clicked.connect(lambda t, row=r, col=c : self.paint_black(row,col))
+                self.pushButton[r][c].setObjectName("pushButton{0}{1}".format(r,c))
+                self.gridLayout.addWidget(self.pushButton[r][c], r, c, 1, 1)
         self.pushButton[0][0].setEnabled(False)
         self.pushButton[9][9].setEnabled(False)
         self.pushButton[0][0].setStyleSheet("background-color: lightblue;")
@@ -40,6 +39,9 @@ class Ui_Form(object):
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def paint_black(self, x,y):
+        self.pushButton[x][y].setStyleSheet("background-color: black;")
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
