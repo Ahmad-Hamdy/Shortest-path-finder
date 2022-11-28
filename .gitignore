@@ -1,2 +1,3 @@
 test.py
-grid.ui
+*.ui
+__pycache__
