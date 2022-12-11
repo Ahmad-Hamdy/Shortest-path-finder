@@ -55,6 +55,14 @@ class node:
 	def status(self):
 		return self._status
 
+	'''
+	each cell has 1 of 4 states:" blank", "barrier", "open", "closed"
+	blank: the normal state for cells that are traversable
+	barrier: the cells that are set as non-traversable, and can't be taken in a path
+	open: the cells that are in queue for being checked to be taken on the path
+	closed: cells that are checked (marked closed not to be checked again)
+	'''
+
 	@status.setter
 	def status(self, string):
 		if string.lower() in ["blank", "barrier", "open", "closed"]:
@@ -63,7 +71,7 @@ class node:
 			raise ValueError("Invalid status value")
 
 	""" 
-	A function to calculate the g_cost of a node
+	A functiom to calculate the g_cost of a node
 
 	By tracing the distance between the node 
 	And it's ancestors back to the starting node.
@@ -72,13 +80,13 @@ class node:
 		if not self.parent:
 			return 0
 
-		if (self.x == self.parent.x) or (self.y == self.parent.y):
+		if self.x == self.parent.x or self.y == self.parent.y:
 			return 10 + self.parent.G_distance()
 		else:
 			return 14 + self.parent.G_distance()
 
 	""" 
-	A function to calculate the h_cost of a node
+	A functiom to calculate the h_cost of a node
 
 	Using euclidean distance heuristic in which
 	the absolute distance between the current node 
@@ -117,7 +125,7 @@ def find_shortest_path(grid, start_coordinates, target_coordinates):
 			if not grid[row][column]:
 				nodes[row][column].status = "barrier"
 
-	# Adding the stat node to the open list to start the main loop
+	# Adding the start node to the open list to start the main loop
 	Open.put(start)
 
 	# main loop that checks all the nodes in the empty list to form the path
@@ -126,6 +134,7 @@ def find_shortest_path(grid, start_coordinates, target_coordinates):
 		# marking the checked nodes as closed (to avoid re-checking them)
 		current = Open.get()
 		current.status = "closed"
+		#print("current: ", current)
 
 		# when reaching the target node Quit the loop
 		if current == target:
@@ -138,6 +147,8 @@ def find_shortest_path(grid, start_coordinates, target_coordinates):
 				if 0 <= row < len(grid) and 0 <= column < len(grid[0]):
 					successor = nodes[row][column]
 
+					#print("successor: ", successor, "for current: ", current)
+
 					# skip the neighbour if it's already checked
 					# or if it's not traversable (barrier)
 					if (successor.status == "closed" or 
@@ -146,16 +157,16 @@ def find_shortest_path(grid, start_coordinates, target_coordinates):
 
 					else:
 						# get the cost of the path leading to that neighbour
-						current_G = current.G_distance() + 10 if (
+						
+						path = current.G_distance() + (10 if (
 							successor.x == current.x or successor.y == current.y
-							) else  14
-						current_H = current.H_distance(target)
-						current_F = current_G + current_H
+							) else  14)
+
 						# update the neighbour if it's never updated(blank)
 						# or the current path leading to it 
 						# is less than the path from it's parent 
-						if successor.status == "blank" or (
-							current_F < successor.G_distance() + successor.parent.H_distance(target)):
+						if successor.status == "blank" or successor.G_distance() > path:
+							#print("G distance:", successor.G_distance(), "path calculated:", path)
 							successor.parent = current
 							successor.F_distance = successor.G_distance() + successor.H_distance(target)
 
@@ -172,6 +183,7 @@ def find_shortest_path(grid, start_coordinates, target_coordinates):
 	else:
 		print("Target not found")
 
+
 	# when the target is found 
 	# trace the path leading to it 
 	# and return a list of path nodes 
@@ -179,23 +191,27 @@ def find_shortest_path(grid, start_coordinates, target_coordinates):
 		shortest_path.append(current)
 		current = current.parent
 
-	'''
-	print("(15, 34): ", nodes[15][34].F_distance, nodes[15][34].G_distance(),nodes[15][34].H_distance(target))
-	print("(14, 35): ", nodes[14][35].F_distance, nodes[14][35].G_distance(),nodes[14][35].H_distance(target), nodes[14][35].parent)
-	print("(15, 35): ", nodes[15][35].F_distance, nodes[15][35].G_distance(),nodes[15][35].H_distance(target), nodes[14][35].parent)
-	print("(14, 36): ", nodes[14][36].F_distance, nodes[14][36].G_distance(),nodes[14][36].H_distance(target), nodes[14][36].parent)
-	print("(15, 36): ", nodes[15][36].F_distance, nodes[15][36].G_distance(),nodes[15][36].H_distance(target), nodes[15][36].parent)
-	'''
-
 	return shortest_path[::-1]
 
 
-if __name__ == '__main__':
 
-	grid = [ [ 1 for j in range(50)] for i in range(20)]
+if __name__ == "__main__":
+
+	grid = [ [ 1 for j in range(50)] for i in range(50)]
+	'''
+	grid = [ [1, 1, 1, 1, 1, 1, 1, 1, 1], 
+	         [0, 1, 0, 0, 0, 0, 0, 1, 1], 
+	         [0, 0, 1, 0, 0, 0, 0, 1, 1], 
+	         [0, 0, 0, 1, 1, 1, 0, 1, 1], 
+	         [0, 0, 0, 1, 1, 1, 0, 1, 1], 
+	         [0, 0, 0, 0, 0, 0, 0, 1, 1], 
+	         [0, 0, 0, 0, 0, 0, 0, 0, 1], 
+	         [0, 0, 0, 0, 0, 1, 0, 1, 0], 
+	         [0, 0, 0, 0, 0, 1, 1, 1, 1] ]
+	         '''
+
 	path = find_shortest_path(grid, (0,0), (19,49))
 	display = [ (str(Node), Node.F_distance) for Node in path]
 	[print(i) for i in display]
 	print("path length: ", len(path))
 	
-

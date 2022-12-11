@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from grid_size import Ui_grid_size
-from Astar_search import find_shortest_path
+from AstarSearch import find_shortest_path
 
 class Ui_Form(object):
     def __init__(self, width, height):
@@ -35,9 +35,9 @@ class Ui_Form(object):
         self.gridLayoutWidget.setGeometry(QtCore.QRect(0, 0, 1600, 850))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
 
-        self.pushButton = [
-                        [QtWidgets.QPushButton(self.gridLayoutWidget) for _ in range(self.HEIGHT)]
-                                                                     for _ in range(self.WIDTH)]
+        self.pushButton = [[QtWidgets.QPushButton(self.gridLayoutWidget) 
+                                            for _ in range(self.HEIGHT)]
+                                            for _ in range(self.WIDTH)]
         for r in range(self.WIDTH):
             for c in range(self.HEIGHT):
                 self.pushButton[r][c].setMinimumSize(QtCore.QSize(1, 1))
@@ -54,7 +54,7 @@ class Ui_Form(object):
         
         self.verticalLayout.addLayout(self.gridLayout)
         self.button_container = QtWidgets.QFrame(self.frame)
-        self.button_container.setMaximumSize(QtCore.QSize(16777215, 90))
+        self.button_container.setMaximumHeight(90)
         self.button_container.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.button_container.setFrameShadow(QtWidgets.QFrame.Raised)
         self.button_container.setObjectName("button_container")
@@ -87,7 +87,8 @@ class Ui_Form(object):
         else:
             self.grid[x][y] = 1
             self.pushButton[x][y].setStyleSheet("background-color: rgb(240, 240, 240);")
-        
+    
+
     def draw_path(self):
         for x in range(self.WIDTH):
             for y in range(self.HEIGHT):
@@ -99,9 +100,10 @@ class Ui_Form(object):
         for cell in path:
             self.pushButton[cell.x][cell.y].setStyleSheet("background-color: green;")
 
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Shortest Path Finder"))
         self.draw_btn.setText(_translate("MainWindow", "Draw path"))
 
 class Linker():
